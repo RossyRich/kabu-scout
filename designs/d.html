@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>案D スイス — 寄り付き前ブリーフィング</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #111111;
+    --line: #e3e3e3;
+    --rule: #111111;
+    --muted: #616161;
+    --faint: #9c9c9c;
+    --accent: #e30613;
+    --up: #d92b2b;
+    --down: #0f7a4d;
+    --watch: #6b7280;
+    --mono: "SF Mono", ui-monospace, "Menlo", monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
+    line-height: 1.75; font-size: 15px;
+    font-feature-settings: "palt";
+  }
+  a { color: inherit; }
+  .wrap { max-width: 840px; margin: 0 auto; padding: 0 24px 100px; }
+
+  header { background: var(--bg); border-bottom: 2px solid var(--rule); position: sticky; top: 0; z-index: 10; }
+  .head-inner {
+    max-width: 840px; margin: 0 auto; padding: 18px 24px 14px;
+    display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+  }
+  .brand { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
+  .brand small { font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.28em; display: block; font-weight: 500; margin-top: 2px; }
+  .head-meta { margin-left: auto; font-family: var(--mono); font-size: 10.5px; color: var(--faint); }
+
+  .dates { display: flex; gap: 22px; overflow-x: auto; padding: 18px 0 0; scrollbar-width: none; }
+  .dates::-webkit-scrollbar { display: none; }
+  .date-tab {
+    font-family: var(--mono); font-size: 12px; padding: 0 0 6px;
+    border: none; border-bottom: 2px solid transparent;
+    background: none; color: var(--faint); cursor: pointer; white-space: nowrap;
+  }
+  .date-tab.active { color: var(--text); border-bottom-color: var(--accent); font-weight: 700; }
+
+  .target { margin: 40px 0 12px; }
+  .target h1 { font-size: 40px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.25; }
+  .target .sub { font-family: var(--mono); font-size: 11px; color: var(--faint); display: block; margin-top: 4px; }
+
+  .market { border-top: 1px solid var(--rule); padding: 22px 0 8px; margin: 24px 0 44px; }
+  .market .summary { font-size: 15.5px; margin-bottom: 24px; max-width: 46em; }
+  .points { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px 28px; margin-bottom: 26px; }
+  .point { border-top: 1px solid var(--line); padding-top: 8px; }
+  .point .label { font-family: var(--mono); font-size: 9.5px; color: var(--faint); letter-spacing: 0.2em; text-transform: uppercase; }
+  .point .value { font-family: var(--mono); font-size: 16px; font-weight: 700; margin: 4px 0 2px; letter-spacing: -0.02em; }
+  .point .note { font-size: 11px; color: var(--muted); line-height: 1.6; }
+  .outlook { padding: 0; max-width: 46em; }
+  .outlook .lbl { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.28em; }
+  .outlook p { font-size: 15px; margin-top: 6px; }
+  .themes { margin-top: 20px; display: flex; gap: 18px; flex-wrap: wrap; }
+  .theme-chip { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .theme-chip::before { content: "— "; color: var(--accent); }
+
+  .plans { margin-bottom: 56px; }
+  .plans-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; border-top: 2px solid var(--rule); padding-top: 12px; margin-bottom: 4px; }
+  .plans-head .no { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.28em; }
+  .plans-head h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+  .plans-caution { font-size: 11px; color: var(--faint); margin-bottom: 22px; }
+  .plan-note { font-size: 15px; padding: 0 0 18px; margin-bottom: 10px; max-width: 46em; border-bottom: 1px solid var(--line); }
+  .plan { border-top: 1px solid var(--line); padding: 22px 0 18px; }
+  .plan-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+  .plan-rank { font-size: 38px; font-weight: 200; color: var(--text); line-height: 1; min-width: 44px; letter-spacing: -0.04em; }
+  .plan.buy .plan-rank, .plan.sell .plan-rank { color: var(--accent); }
+  .plan.avoid .plan-rank { color: var(--faint); }
+  .conf { margin-left: auto; font-family: var(--mono); font-size: 10.5px; color: var(--faint); display: flex; align-items: center; gap: 8px; }
+  .conf b { color: var(--text); font-size: 17px; font-weight: 700; }
+  .conf-bar { width: 80px; height: 2px; background: var(--line); overflow: hidden; display: inline-block; }
+  .conf-bar span { display: block; height: 100%; background: var(--text); }
+  .plan-basis { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+  .plan-scenario { font-size: 15px; margin-bottom: 16px; max-width: 46em; }
+  .plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 28px; }
+  .plan-cell { border-top: 1px solid var(--line); padding: 8px 0 4px; }
+  .plan-cell .lbl { font-family: var(--mono); font-size: 9px; color: var(--faint); letter-spacing: 0.2em; }
+  .plan-cell p { font-size: 12.5px; color: var(--muted); margin-top: 3px; line-height: 1.7; }
+
+  .filters { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 30px; align-items: center; border-top: 2px solid var(--rule); padding-top: 14px; }
+  .chip { font-size: 13px; padding: 0 0 3px; border: none; border-bottom: 2px solid transparent; background: none; color: var(--faint); cursor: pointer; }
+  .chip.active { color: var(--text); border-bottom-color: var(--accent); font-weight: 700; }
+  #q {
+    flex: 1; min-width: 150px; background: none; border: none; border-bottom: 1px solid var(--line);
+    color: var(--text); padding: 4px 2px; font-size: 13px; outline: none; font-family: inherit;
+  }
+  #q:focus { border-bottom-color: var(--text); }
+
+  .section { margin-bottom: 52px; }
+  .section-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 4px; }
+  .section-head .no { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.28em; }
+  .section-head h2 { font-size: 19px; font-weight: 800; letter-spacing: -0.01em; }
+  .section-head .count { font-family: var(--mono); font-size: 10.5px; color: var(--faint); margin-left: auto; }
+
+  .card { border-top: 1px solid var(--line); padding: 18px 0 16px; }
+  .card-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 5px; }
+  .dir { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; }
+  .dir.up { color: var(--up); }
+  .dir.down { color: var(--down); }
+  .dir.watch { color: var(--watch); }
+  .code { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .name { font-size: 17px; font-weight: 800; letter-spacing: -0.01em; }
+  .name a { text-decoration: none; }
+  .name a:hover { color: var(--accent); }
+  .tag { font-family: var(--mono); font-size: 10px; color: var(--faint); letter-spacing: 0.1em; }
+  .price {
+    font-family: var(--mono); font-size: 12px; text-decoration: none; color: var(--text);
+    display: inline-flex; gap: 6px; align-items: baseline; white-space: nowrap;
+    border-bottom: 1px solid var(--line);
+  }
+  .price:hover { border-bottom-color: var(--accent); color: var(--accent); }
+  .price .yen { color: var(--faint); font-size: 10px; }
+  .price.up .chg { color: var(--up); }
+  .price.down .chg { color: var(--down); }
+  .headline { font-size: 15px; font-weight: 700; margin: 4px 0 6px; max-width: 46em; }
+  .detail { font-size: 13px; color: var(--muted); max-width: 50em; }
+  .links { margin-top: 10px; display: flex; gap: 18px; flex-wrap: wrap; }
+  .links a { font-family: var(--mono); font-size: 11px; color: var(--faint); text-decoration: none; }
+  .links a:hover { color: var(--accent); }
+
+  .empty { color: var(--faint); font-size: 13px; padding: 12px 0 20px; }
+  .nodata { text-align: center; padding: 100px 20px; color: var(--muted); }
+
+  footer {
+    max-width: 840px; margin: 0 auto; padding: 20px 24px 48px;
+    border-top: 2px solid var(--rule);
+    font-size: 11px; color: var(--faint); line-height: 1.9;
+  }
+
+  .switcher {
+    position: fixed; bottom: 14px; right: 14px; z-index: 50;
+    display: flex; gap: 6px; align-items: center;
+    background: rgba(255,255,255,0.95); border: 1px solid var(--rule); padding: 6px 10px;
+  }
+  .switcher a { font-family: var(--mono); font-size: 11px; color: var(--muted); text-decoration: none; padding: 2px 8px; }
+  .switcher a:hover { color: var(--accent); }
+  .switcher a.here { background: var(--rule); color: var(--bg); font-weight: 700; }
+
+  @media (max-width: 560px) {
+    body { font-size: 14px; }
+    .target h1 { font-size: 28px; }
+    .points { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="head-inner">
+    <div class="brand">寄り付き前ブリーフィング<small>MORNING BRIEF — JP EQUITIES</small></div>
+    <div class="head-meta" id="collected"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="dates" id="dates"></nav>
+  <main id="app"><div class="nodata">データがまだありません。夕方の自動収集後に表示されます。</div></main>
+</div>
+
+<footer>
+  本ページは公開情報を自動収集した参考資料です。情報の正確性・網羅性は保証されません。
+  数値や材料は必ず一次情報（適時開示・取引所発表等）でご確認ください。投資判断はご自身の責任でお願いします。
+</footer>
+
+<nav class="switcher">
+  <a href="index.html">案一覧</a><a href="a.html">A</a><a href="b.html">B</a><a href="c.html">C</a><a href="d.html" class="here">D</a><a href="e.html">E</a>
+</nav>
+
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>デザイン5案 — 寄り付き前ブリーフィング</title>
+<style>
+  :root { --mono: "SF Mono", ui-monospace, "Menlo", monospace; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #17181c; color: #e9e8e4;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
+    line-height: 1.75; font-size: 15px; padding: 48px 24px 90px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 26px; font-weight: 800; letter-spacing: 0.02em; }
+  .lead { color: #9aa0ab; font-size: 13.5px; margin: 8px 0 36px; }
+  a.case {
+    display: flex; gap: 20px; align-items: center; text-decoration: none; color: inherit;
+    border: 1px solid #30323a; border-radius: 12px; padding: 20px 22px; margin-bottom: 14px;
+    background: #1d1f25; transition: border-color .15s, transform .15s;
+  }
+  a.case:hover { border-color: #e8c15a; transform: translateX(4px); }
+  .letter {
+    font-family: var(--mono); font-size: 34px; font-weight: 800; min-width: 56px; height: 56px;
+    display: flex; align-items: center; justify-content: center; border-radius: 10px;
+  }
+  .body { flex: 1; }
+  .name { font-size: 17px; font-weight: 800; }
+  .name small { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; color: #7d8390; margin-left: 10px; }
+  .desc { font-size: 13px; color: #9aa0ab; margin-top: 3px; }
+  .pal { display: flex; gap: 5px; margin-top: 9px; }
+  .pal i { width: 18px; height: 18px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.15); }
+  .arrow { font-family: var(--mono); color: #7d8390; font-size: 18px; }
+  .now {
+    display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 700;
+    background: #e8c15a; color: #17181c; border-radius: 4px; padding: 1px 8px; margin-left: 10px;
+    vertical-align: middle;
+  }
+  .foot { margin-top: 34px; font-size: 12.5px; color: #7d8390; }
+  /* 各案の顔 */
+  .la { background: #0d0f12; color: #e8c15a; border: 1px solid #262c36; }
+  .lb { background: #f4f0e5; color: #8f1d14; font-family: "Hiragino Mincho ProN", serif; }
+  .lc { background: #060806; color: #ffb000; border: 1px solid #1e3a24; }
+  .ld { background: #ffffff; color: #e30613; }
+  .le { background: #10122a; color: #eaff00; border: 2px solid #2d3163; box-shadow: 3px 3px 0 rgba(234,255,0,0.3); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>デザイン5案</h1>
+  <p class="lead">同じデータ（7/13分）で5案すべて動きます。クリックして実際の使い心地で選んでください。各ページ右下のボタンで案の行き来もできます。</p>
+
+  <a class="case" href="a.html">
+    <span class="letter la">A</span>
+    <span class="body">
+      <span class="name">ナイトデスク<small>NIGHT DESK</small><span class="now">現行</span></span>
+      <span class="desc">黒×琥珀のトレーディングデスク。夜に見る前提の落ち着いたダークUI。今のデザイン。</span>
+      <span class="pal"><i style="background:#0d0f12"></i><i style="background:#14171c"></i><i style="background:#e8c15a"></i><i style="background:#f2555a"></i><i style="background:#3fae7a"></i></span>
+    </span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="case" href="b.html">
+    <span class="letter lb">B</span>
+    <span class="body">
+      <span class="name">朝刊<small>MORNING PAPER</small></span>
+      <span class="desc">生成りの紙×明朝体×朱色。新聞の相場欄のようなエディトリアル。カードは罫線区切りで紙面風。</span>
+      <span class="pal"><i style="background:#f4f0e5"></i><i style="background:#26231c"></i><i style="background:#8f1d14"></i><i style="background:#b3271b"></i><i style="background:#1f5c3d"></i></span>
+    </span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="case" href="c.html">
+    <span class="letter lc">C</span>
+    <span class="body">
+      <span class="name">ターミナル<small>TERMINAL</small></span>
+      <span class="desc">全編等幅フォント、黒地に琥珀と蛍光グリーン。金融端末（Bloomberg風）の情報密度と走査線。</span>
+      <span class="pal"><i style="background:#060806"></i><i style="background:#ffb000"></i><i style="background:#cfe9d1"></i><i style="background:#ff6b5e"></i><i style="background:#46e18a"></i></span>
+    </span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="case" href="d.html">
+    <span class="letter ld">D</span>
+    <span class="body">
+      <span class="name">スイス<small>SWISS / INTERNATIONAL</small></span>
+      <span class="desc">白地に黒の太罫とスイス赤1色。枠や塗りを捨てて余白とタイポグラフィだけで組むミニマル。</span>
+      <span class="pal"><i style="background:#ffffff"></i><i style="background:#111111"></i><i style="background:#e30613"></i><i style="background:#d92b2b"></i><i style="background:#0f7a4d"></i></span>
+    </span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="case" href="e.html">
+    <span class="letter le">E</span>
+    <span class="body">
+      <span class="name">マガジン<small>MAGAZINE / BRUTAL</small></span>
+      <span class="desc">濃紺×蛍光イエロー、太枠とオフセット影、斜体の巨大ナンバー。ストリート誌のような強いコントラスト。</span>
+      <span class="pal"><i style="background:#10122a"></i><i style="background:#eaff00"></i><i style="background:#ff5d7e"></i><i style="background:#3ce8a4"></i><i style="background:#f1f0ff"></i></span>
+    </span>
+    <span class="arrow">→</span>
+  </a>
+
+  <p class="foot">気に入った案（または「Bの配色でCの密度」のような組み合わせ）を伝えてもらえれば、本番の index.html に適用します。</p>
+</div>
+</body>
+</html>
