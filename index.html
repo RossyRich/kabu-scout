@@ -50,6 +50,31 @@
   }
   .head-meta { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--faint); text-align: right; }
 
+  /* ---------- 表示切替タブ ---------- */
+  .viewtabs {
+    display: flex; gap: 4px; margin-top: 16px;
+    border: 1px solid var(--line); border-radius: 999px; padding: 4px; width: fit-content;
+  }
+  .vtab {
+    font-size: 13px; padding: 6px 20px; border: none; border-radius: 999px;
+    background: none; color: var(--muted); cursor: pointer; font-family: inherit;
+  }
+  .vtab.active { background: var(--accent); color: var(--bg); font-weight: 700; }
+
+  /* ---------- 結果分析 ---------- */
+  .res-rank { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--accent); min-width: 24px; }
+  .vd { font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 4px; white-space: nowrap; }
+  .vd.win  { color: var(--bg); background: var(--accent); }
+  .vd.lose { color: var(--muted); background: none; border: 1px solid var(--line); }
+  .vd.flat { color: var(--watch); background: rgba(127,142,168,0.12); }
+  .res-nums {
+    margin-left: auto; font-family: var(--mono); font-size: 12px; color: var(--faint);
+    display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap;
+  }
+  .res-nums b { font-size: 13.5px; font-weight: 700; color: var(--text); }
+  .res-nums b.up { color: var(--up); }
+  .res-nums b.down { color: var(--down); }
+
   /* ---------- 日付タブ ---------- */
   .dates {
     display: flex; gap: 8px; overflow-x: auto; padding: 16px 0 4px;
@@ -230,6 +255,7 @@
 </header>
 
 <div class="wrap">
+  <nav class="viewtabs" id="viewtabs" hidden></nav>
   <nav class="dates" id="dates"></nav>
   <main id="app"><div class="nodata">データがまだありません。夕方の自動収集後に表示されます。</div></main>
 </div>
@@ -248,6 +274,7 @@
   let currentIdx = 0;
   let dirFilter = 'all';
   let query = '';
+  let view = 'plan';   // 'plan' = 翌朝の予想 / 'results' = 結果分析
 
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s == null ? '' : s)
@@ -326,7 +353,107 @@
     '</article>';
   }
 
+  function renderViewTabs() {
+    const vt = $('#viewtabs');
+    vt.hidden = false;
+    vt.innerHTML = [['plan', '翌朝の予想'], ['results', '結果分析']].map(([v, label]) =>
+      '<button class="vtab' + (view === v ? ' active' : '') + '" data-v="' + v + '">' + label + '</button>'
+    ).join('');
+    vt.querySelectorAll('.vtab').forEach(btn => {
+      btn.addEventListener('click', () => { view = btn.dataset.v; render(); });
+    });
+  }
+
+  const VD_LABEL = { win: '○ 的中', lose: '× 外れ', flat: '— 引き分け' };
+
+  function resultRowHTML(r) {
+    const vd = VD_LABEL[r.verdict] ? r.verdict : 'flat';
+    const side = SIDE_DIR[r.side] ? r.side : 'avoid';
+    const oc = (typeof r.oc === 'number') ? r.oc : null;
+    const ocCls = oc === null ? '' : (oc > 0 ? 'up' : (oc < 0 ? 'down' : ''));
+    const nameInner = r.code
+      ? '<a href="https://kabutan.jp/stock/chart/?code=' + esc(r.code) + '" target="_blank" rel="noopener">' + esc(r.name) + '</a>'
+      : esc(r.name);
+    return '<article class="card">' +
+      '<div class="card-top">' +
+        '<span class="res-rank">' + esc(String(r.rank)) + '</span>' +
+        '<span class="vd ' + vd + '">' + VD_LABEL[vd] + '</span>' +
+        '<span class="dir ' + SIDE_DIR[side] + '">' + SIDE_LABEL[side] + '</span>' +
+        (r.code ? '<span class="code">' + esc(r.code) + '</span>' : '') +
+        '<span class="name">' + nameInner + '</span>' +
+        '<span class="res-nums">' +
+          (r.gap ? '<span>GAP ' + esc(r.gap) + '</span>' : '') +
+          (r.open ? '<span>寄 ' + esc(r.open) + '</span>' : '') +
+          (r.close ? '<span>引 ' + esc(r.close) + '</span>' : '') +
+          (oc !== null ? '<b class="' + ocCls + '">' + (oc > 0 ? '+' : '') + oc.toFixed(2) + '%</b>' : '') +
+        '</span>' +
+      '</div>' +
+      (r.note ? '<div class="detail">' + esc(r.note) + '</div>' : '') +
+    '</article>';
+  }
+
+  function renderResults() {
+    $('#dates').hidden = true;
+    const latest = DATA[0];
+    $('#collected').textContent = latest.date + ' ' + (latest.collectedAt || '') + ' 収集';
+
+    let html = '<div class="target"><h1>結果分析</h1><span class="sub">プラン銘柄の翌日答え合わせ</span></div>';
+    const days = DATA.filter(d => d.results && d.results.items && d.results.items.length);
+
+    if (!days.length) {
+      html += '<div class="nodata">まだ結果がありません。<br>最初の答え合わせは、次の取引日の夕方の自動収集後に表示されます。</div>';
+      $('#app').innerHTML = html;
+      return;
+    }
+
+    // 通算成績（順位別）
+    const ranks = [1, 2, 3, 4, 5];
+    const stat = {};
+    ranks.forEach(r => { stat[r] = { w: 0, l: 0, f: 0, sum: 0, pn: 0 }; });
+    let tw = 0, tl = 0, tf = 0, tsum = 0, tpn = 0;
+    days.forEach(d => d.results.items.forEach(it => {
+      const s = stat[it.rank];
+      if (!s) return;
+      const oc = (typeof it.oc === 'number') ? it.oc : 0;
+      // 平均損益は戦略方向ベース: 買い=寄→引そのまま、売り=符号反転、見送り=対象外
+      const pl = it.side === 'buy' ? oc : (it.side === 'sell' ? -oc : null);
+      if (pl !== null) { s.sum += pl; s.pn++; tsum += pl; tpn++; }
+      if (it.verdict === 'win') { s.w++; tw++; }
+      else if (it.verdict === 'lose') { s.l++; tl++; }
+      else { s.f++; tf++; }
+    }));
+    const wr = (w, l) => (w + l) ? Math.round(100 * w / (w + l)) + '%' : '—';
+    const avg = (sum, n) => n ? ((sum / n > 0 ? '+' : '') + (sum / n).toFixed(2) + '%') : '—';
+    html += '<section class="market">' +
+      '<div class="summary">通算成績（' + days.length + '営業日分）。判定は「寄り付き→大引け」の値動きベース：買い方向は+0.5%以上で的中、売り方向は-0.5%以下で的中、見送りは下落なら見送り正解（±0.5%未満は引き分け）。平均損益は戦略方向に沿った寄り引け損益（見送りは勝率のみ集計）。</div>' +
+      '<div class="points">' +
+        '<div class="point"><div class="label">全体</div><div class="value">勝率 ' + wr(tw, tl) + '</div><div class="note">' + tw + '勝' + tl + '敗' + tf + '分・平均損益 ' + avg(tsum, tpn) + '</div></div>' +
+        ranks.map(r => {
+          const s = stat[r];
+          return '<div class="point"><div class="label">' + r + '位</div>' +
+            '<div class="value">勝率 ' + wr(s.w, s.l) + '</div>' +
+            '<div class="note">' + s.w + '勝' + s.l + '敗' + s.f + '分・平均損益 ' + avg(s.sum, s.pn) + '</div></div>';
+        }).join('') +
+      '</div>' +
+      '<div class="plans-caution">自動採点による参考記録です。実際の売買結果（エントリータイミング・スリッページ等）とは異なります。</div>' +
+    '</section>';
+
+    // 日別の答え合わせ（新しい順）
+    days.forEach(d => {
+      html += '<section class="section">' +
+        '<div class="section-head"><span class="no">RESULT</span><h2>' + esc(fmtDate(d.targetDate)) + ' の答え合わせ</h2></div>' +
+        (d.results.note ? '<div class="plan-note">' + esc(d.results.note) + '</div>' : '') +
+        d.results.items.slice().sort((a, b) => a.rank - b.rank).map(resultRowHTML).join('') +
+      '</section>';
+    });
+
+    $('#app').innerHTML = html;
+  }
+
   function render() {
+    renderViewTabs();
+    if (view === 'results') { renderResults(); return; }
+    $('#dates').hidden = false;
     renderDates();
     const d = DATA[currentIdx];
     $('#collected').textContent = d.date + ' ' + (d.collectedAt || '') + ' 収集';
