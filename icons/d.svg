@@ -1,0 +1,22 @@
+<svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#171b22"/>
+      <stop offset="1" stop-color="#0b0d10"/>
+    </linearGradient>
+    <clipPath id="above">
+      <rect x="0" y="0" width="180" height="126"/>
+    </clipPath>
+  </defs>
+  <rect width="180" height="180" fill="url(#bg)"/>
+  <!-- 朝日（寄り付き） -->
+  <g clip-path="url(#above)">
+    <circle cx="90" cy="126" r="44" fill="#e8c15a"/>
+    <circle cx="90" cy="126" r="58" fill="none" stroke="#e8c15a" stroke-width="3" opacity="0.35"/>
+  </g>
+  <!-- 地平線 -->
+  <line x1="16" y1="126" x2="164" y2="126" stroke="#3a4250" stroke-width="6" stroke-linecap="round"/>
+  <!-- 上昇スパークライン -->
+  <polyline points="28,112 62,88 88,98 150,38" fill="none" stroke="#f2555a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="150,38 128,40 144,58" fill="#f2555a"/>
+</svg>

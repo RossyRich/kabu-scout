@@ -1,0 +1,13 @@
+<svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#171b22"/>
+      <stop offset="1" stop-color="#0b0d10"/>
+    </linearGradient>
+  </defs>
+  <rect width="180" height="180" fill="url(#bg)"/>
+  <text x="90" y="106" text-anchor="middle" font-family="Hiragino Sans, Hiragino Kaku Gothic ProN, sans-serif" font-weight="800" font-size="74" fill="#e8c15a" letter-spacing="2">カブ</text>
+  <!-- 上昇チェックマーク -->
+  <polyline points="52,138 84,150 128,128" fill="none" stroke="#f2555a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="128,128 112,126 122,141" fill="#f2555a"/>
+</svg>
