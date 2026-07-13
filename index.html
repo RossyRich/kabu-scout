@@ -364,28 +364,35 @@
     });
   }
 
-  const VD_LABEL = { win: '○ 的中', lose: '× 外れ', flat: '— 引き分け' };
+  const VD_MARK = { win: '○', lose: '×', flat: '—' };
+
+  function pctHTML(v) {
+    if (typeof v !== 'number') return '';
+    const cls = v > 0 ? 'up' : (v < 0 ? 'down' : '');
+    return '<b class="' + cls + '">' + (v > 0 ? '+' : '') + v.toFixed(2) + '%</b>';
+  }
 
   function resultRowHTML(r) {
-    const vd = VD_LABEL[r.verdict] ? r.verdict : 'flat';
+    const vd = VD_MARK[r.verdict] ? r.verdict : 'flat';
+    const vd30 = VD_MARK[r.verdict30] ? r.verdict30 : null;
     const side = SIDE_DIR[r.side] ? r.side : 'avoid';
-    const oc = (typeof r.oc === 'number') ? r.oc : null;
-    const ocCls = oc === null ? '' : (oc > 0 ? 'up' : (oc < 0 ? 'down' : ''));
     const nameInner = r.code
       ? '<a href="https://kabutan.jp/stock/chart/?code=' + esc(r.code) + '" target="_blank" rel="noopener">' + esc(r.name) + '</a>'
       : esc(r.name);
     return '<article class="card">' +
       '<div class="card-top">' +
         '<span class="res-rank">' + esc(String(r.rank)) + '</span>' +
-        '<span class="vd ' + vd + '">' + VD_LABEL[vd] + '</span>' +
+        (vd30 ? '<span class="vd ' + vd30 + '">30分 ' + VD_MARK[vd30] + '</span>' : '') +
+        '<span class="vd ' + vd + '">引け ' + VD_MARK[vd] + '</span>' +
         '<span class="dir ' + SIDE_DIR[side] + '">' + SIDE_LABEL[side] + '</span>' +
         (r.code ? '<span class="code">' + esc(r.code) + '</span>' : '') +
         '<span class="name">' + nameInner + '</span>' +
         '<span class="res-nums">' +
           (r.gap ? '<span>GAP ' + esc(r.gap) + '</span>' : '') +
           (r.open ? '<span>寄 ' + esc(r.open) + '</span>' : '') +
-          (r.close ? '<span>引 ' + esc(r.close) + '</span>' : '') +
-          (oc !== null ? '<b class="' + ocCls + '">' + (oc > 0 ? '+' : '') + oc.toFixed(2) + '%</b>' : '') +
+          (r.p30 || typeof r.oc30 === 'number'
+            ? '<span>30分 ' + (r.p30 ? esc(r.p30) + ' ' : '') + pctHTML(r.oc30) + '</span>' : '') +
+          '<span>引け ' + (r.close ? esc(r.close) + ' ' : '') + pctHTML(r.oc) + '</span>' +
         '</span>' +
       '</div>' +
       (r.note ? '<div class="detail">' + esc(r.note) + '</div>' : '') +
@@ -408,32 +415,37 @@
 
     // 通算成績（順位別）
     const ranks = [1, 2, 3, 4, 5];
+    const newM = () => ({ w: 0, l: 0, f: 0, sum: 0, pn: 0 });
     const stat = {};
-    ranks.forEach(r => { stat[r] = { w: 0, l: 0, f: 0, sum: 0, pn: 0 }; });
-    let tw = 0, tl = 0, tf = 0, tsum = 0, tpn = 0;
+    ranks.forEach(r => { stat[r] = { m30: newM(), mEnd: newM() }; });
+    const total = { m30: newM(), mEnd: newM() };
+    // 平均損益は戦略方向ベース: 買い=寄→引そのまま、売り=符号反転、見送り=対象外
+    const addTo = (m, side, verdict, oc) => {
+      if (!verdict) return;
+      const pl = side === 'buy' ? oc : (side === 'sell' ? -oc : null);
+      if (typeof pl === 'number') { m.sum += pl; m.pn++; }
+      if (verdict === 'win') m.w++; else if (verdict === 'lose') m.l++; else m.f++;
+    };
     days.forEach(d => d.results.items.forEach(it => {
       const s = stat[it.rank];
       if (!s) return;
-      const oc = (typeof it.oc === 'number') ? it.oc : 0;
-      // 平均損益は戦略方向ベース: 買い=寄→引そのまま、売り=符号反転、見送り=対象外
-      const pl = it.side === 'buy' ? oc : (it.side === 'sell' ? -oc : null);
-      if (pl !== null) { s.sum += pl; s.pn++; tsum += pl; tpn++; }
-      if (it.verdict === 'win') { s.w++; tw++; }
-      else if (it.verdict === 'lose') { s.l++; tl++; }
-      else { s.f++; tf++; }
+      addTo(s.mEnd, it.side, it.verdict, it.oc);
+      addTo(total.mEnd, it.side, it.verdict, it.oc);
+      addTo(s.m30, it.side, it.verdict30, it.oc30);
+      addTo(total.m30, it.side, it.verdict30, it.oc30);
     }));
-    const wr = (w, l) => (w + l) ? Math.round(100 * w / (w + l)) + '%' : '—';
-    const avg = (sum, n) => n ? ((sum / n > 0 ? '+' : '') + (sum / n).toFixed(2) + '%') : '—';
+    const wr = (m) => (m.w + m.l) ? Math.round(100 * m.w / (m.w + m.l)) + '%' : '—';
+    const avg = (m) => m.pn ? ((m.sum / m.pn > 0 ? '+' : '') + (m.sum / m.pn).toFixed(2) + '%') : '—';
+    const statPoint = (label, s) =>
+      '<div class="point"><div class="label">' + label + '</div>' +
+      '<div class="value">30分 ' + wr(s.m30) + ' ／ 引け ' + wr(s.mEnd) + '</div>' +
+      '<div class="note">30分: ' + s.m30.w + '勝' + s.m30.l + '敗' + s.m30.f + '分・平均 ' + avg(s.m30) + '</div>' +
+      '<div class="note">引け: ' + s.mEnd.w + '勝' + s.mEnd.l + '敗' + s.mEnd.f + '分・平均 ' + avg(s.mEnd) + '</div></div>';
     html += '<section class="market">' +
-      '<div class="summary">通算成績（' + days.length + '営業日分）。判定は「寄り付き→大引け」の値動きベース：買い方向は+0.5%以上で的中、売り方向は-0.5%以下で的中、見送りは下落なら見送り正解（±0.5%未満は引き分け）。平均損益は戦略方向に沿った寄り引け損益（見送りは勝率のみ集計）。</div>' +
+      '<div class="summary">通算成績（' + days.length + '営業日分）。「30分」＝寄り付き→9:30、「引け」＝寄り付き→大引けの2つの物差しで判定：買い方向は+0.5%以上で的中、売り方向は-0.5%以下で的中、見送りは下落なら見送り正解（±0.5%未満は引き分け）。平均損益は戦略方向に沿った損益（見送りは勝率のみ集計）。</div>' +
       '<div class="points">' +
-        '<div class="point"><div class="label">全体</div><div class="value">勝率 ' + wr(tw, tl) + '</div><div class="note">' + tw + '勝' + tl + '敗' + tf + '分・平均損益 ' + avg(tsum, tpn) + '</div></div>' +
-        ranks.map(r => {
-          const s = stat[r];
-          return '<div class="point"><div class="label">' + r + '位</div>' +
-            '<div class="value">勝率 ' + wr(s.w, s.l) + '</div>' +
-            '<div class="note">' + s.w + '勝' + s.l + '敗' + s.f + '分・平均損益 ' + avg(s.sum, s.pn) + '</div></div>';
-        }).join('') +
+        statPoint('全体', total) +
+        ranks.map(r => statPoint(r + '位', stat[r])).join('') +
       '</div>' +
       '<div class="plans-caution">自動採点による参考記録です。実際の売買結果（エントリータイミング・スリッページ等）とは異なります。</div>' +
     '</section>';
