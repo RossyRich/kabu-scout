@@ -3,6 +3,306 @@
 // 保持は直近10営業日分。それより古いものは削除します。
 window.KABU_DATA = [
   {
+    date: "2026-07-13",
+    targetDate: "2026-07-14",
+    collectedAt: "18:05",
+    market: {
+      summary: "本日(7/13 月)の東京市場は3営業日ぶりに反落。韓国株の急落や中東(イラン)情勢の緊迫を背景にAI・半導体関連株へ売りが波及し、日経平均は一時1900円超安の場面もあった。ただメガバンク株にマネーが流入するなど物色は分散し、TOPIX・グロース250は日経平均ほど下げ幅が大きくなかった。",
+      points: [
+        { label: "日経平均(7/13)", value: "67,242.73円 (-1,315.00 / -1.92%)", note: "3営業日ぶり反落。AI・半導体株中心に売り、一時1900円超安" },
+        { label: "TOPIX(7/13)", value: "4,007.49 (-28.59 / -0.71%)", note: "反落だが下げは限定的、メガバンク株に資金流入" },
+        { label: "グロース250(7/13)", value: "1,678.78 (-9.31 / -0.55%)", note: "反落だが下げ渋り。※指数水準は出典間で差があり参考値" },
+        { label: "NYダウ(7/10)", value: "52,637.01 (+0.29%)", note: "4連騰。AIブーム勝ち組に強気" },
+        { label: "ナスダック(7/10)", value: "26,281.61 (+0.29%)", note: "12連騰で史上最高値更新" },
+        { label: "ドル円", value: "162円前後 (7/13昼)", note: "イラン情勢で原油高・有事のドル買い。円安基調継続" }
+      ],
+      outlook: "米国株は金曜まで堅調(ナスダックは連日最高値)で外部環境は追い風だが、7/14(火)の東京市場は前日急落を受けた地合いの弱さと、日本時間夜に控える米6月CPI(米東部8:30発表)への警戒が上値を抑えやすい。CPIが強ければ利上げ観測が強まりドル高・株安圧力、鈍化ならリスクオン回帰となる分岐点で、発表前は様子見ムードが強まりやすい。加えて7/15に米PPI・ベージュブック、7/16に米小売売上高、ウォーシュFRB議長の議会証言も控える。中東(イラン)情勢と原油価格の動向も引き続き波乱要因。物色は本日引け後に出た新規決算(上方修正組の順張り／下方修正組の戻り売り)が中心になりやすい。",
+      sources: [
+        { label: "日経 東証大引け(7/13 反落)", url: "https://www.nikkei.com/article/DGXZQOFL133WE0T10C26A7000000/" },
+        { label: "日経 日経平均1315円安 メガバンク株に流入(7/13)", url: "https://www.nikkei.com/article/DGXZQOUB121UYTS6A710C2000000/" },
+        { label: "WTOP 米主要3指数(7/10金)", url: "https://wtop.com/news/2026/07/how-major-us-stock-indexes-fared-friday-7-10-2026/" },
+        { label: "外為どっとコム ドル円見通し(7/13)", url: "https://www.gaitame.com/media/entry/2026/07/13/122415" },
+        { label: "みんかぶFX 来週の注目材料 米CPI・PPI", url: "https://fx.minkabu.jp/news/372899" }
+      ]
+    },
+    themes: ["AI・半導体（受注・製造装置）", "生成AI関連（AI駆動開発・SaaS）", "防衛・舶用", "決算プレイ（上方修正/下方修正）", "リユース・インバウンド"],
+    prices: {
+      "7725": { close: "1,779", change: "+2.54%" },
+      "7513": { close: "1,277", change: "+0.71%" },
+      "3994": { close: "5,071", change: "+2.76%" },
+      "6814": { close: "7,390", change: "+15.65%" },
+      "7453": { close: "4,233", change: "+16.84%" },
+      "9270": { close: "1,972", change: "+1.13%" },
+      "3457": { close: "982", change: "+1.45%" },
+      "3907": { close: "905", change: "-2.48%" },
+      "7815": { close: "437", change: "+7.11%" },
+      "4381": { close: "551", change: "+76.60%" },
+      "5240": { close: "230", change: "+27.78%" },
+      "6227": { close: "7,790", change: "+14.73%" },
+      "4199": { close: "903", change: "+17.58%" },
+      "195A": { close: "762", change: "+15.11%" },
+      "285A": { close: "67,100", change: "-12.86%" },
+      "2160": { close: "2,570", change: "-1.34%" },
+      "2157": { close: "1,035", change: "+6.70%" }
+    },
+    plans: {
+      note: "本日の東京市場は日経-1.9%と3営業日ぶり反落し、AI・半導体に売りが波及。7/14(火)は日本時間夜の米6月CPIを控え様子見ムードが強く、寄り高後の伸び悩みに警戒。物色は本日引け後に出た新規決算が中心になりやすく、地合い悪化局面のため買いは寄り後の押し目形成を確認、悪材料株の戻り売りとテーマ思惑株の見送りを優先したい。",
+      items: [
+        {
+          rank: 1, code: "7725", name: "インターアクション", side: "buy",
+          stance: "引け後好決算・寄り後の押し目狙い", confidence: "中", confidenceScore: 60,
+          basis: "引け後に今期経常94%増益・11円増配へ上方修正（株探決算速報） × 半導体検査用光源装置で半導体テーマと整合 × 引け後発表で寄りに反応余地",
+          scenario: "引け後の大幅増益・増配で寄りはギャップアップが濃厚。半導体検査関連でテーマとも整合する。ただし数値は速報見出しベースで詳細未確認、小型のため値動きは荒くなりやすい。寄り成りは避け、寄り後に高値を切り上げる動きを確認してからが基本シナリオ。",
+          entry: "寄り成りは避け、寄り後5〜15分の押し目で初動高値超えを確認してから。気配が弱ければ見送り。",
+          invalidation: "寄り値を明確に割り込んだら撤退。開示原本で増益率が速報見出しと乖離していた場合は前提が崩れる。",
+          risk: "小型で板が薄く往って来いになりやすい。7/14は米CPI前で半導体全体が手控えられると連れ安の可能性。"
+        },
+        {
+          rank: 2, code: "3994", name: "マネーフォワード", side: "buy",
+          stance: "黒字転換上方修正・寄り後順張り", confidence: "中", confidenceScore: 58,
+          basis: "今期営業損益を赤字予想から黒字圏へ上方修正（株探・トレーダーズウェブ） × SaaS大型で流動性あり × 黒字転換は成長株の見直し材料",
+          scenario: "赤字予想からの黒字転換観測で成長株見直しの買いが入りやすい。大型で流動性が高く値動きは比較的素直な候補。ただしグロース株は地合いに左右されやすく、7/14の米CPI警戒で上値が重くなる場面もあり得る。",
+          entry: "寄り後の押し目、または前場の高値ブレイクで順張り。流動性が高く出入りしやすい。",
+          invalidation: "寄り後にマイナス転換し前日終値を割れたら出尽くしと判断して撤退。",
+          risk: "グロース株は金利・CPI次第で急変。修正は損益トントン圏で、黒字幅の小ささに失望する可能性。"
+        },
+        {
+          rank: 3, code: "3907", name: "シリコンスタジオ", side: "sell",
+          stance: "悪決算・戻り売り/買い見送り", confidence: "中", confidenceScore: 55,
+          basis: "引け後に今期経常を黒字→赤字へ下方修正＋無配転落（株探・トレーダーズウェブ、最終損益81→▲228百万円） × 減益・無配のダブル悪材料",
+          scenario: "赤字転落＋無配のダブル悪材料で寄りは売り先行が濃厚。安く寄った後の自律反発が鈍ければ戻り売り優位の一日になりやすい。空売りをしない場合も、寄りの逆張り買いを避ける判断材料として。",
+          entry: "（売りの場合）寄り後の自律反発が失速した点。現物派は安易な逆張り買いを避ける。",
+          invalidation: "寄り後に前日終値を回復する強い切り返しが出たら売りシナリオは無効（あく抜け買いと判断）。",
+          risk: "小型で急落後の自律反発（あく抜け買い）に踏み上げられる場合がある。"
+        },
+        {
+          rank: 4, code: "6814", name: "古野電気", side: "buy",
+          stance: "決算プレイ2日目・押し目狙い（寄り天警戒）", confidence: "中", confidenceScore: 50,
+          basis: "1Q営業益65%増（56.8億円）でS高+15.7% × 舶用・防衛・SNS(あす上がる株/亀トレ)で3系統言及 × 半導体安の地合いでも防衛は相対的に強い",
+          scenario: "好決算＋防衛テーマで注目度は高いが、本日すでにS高（+15.7%）まで買われており、決算プレイ2日目は寄り天→往って来いの典型パターンに注意。寄りの強さと出来高が続くかを見て、押し目を確認してからが基本。",
+          entry: "寄り成りは避ける。寄り後の押し目で高値を再び超える動きを確認してから。気配が過熱していれば見送り。",
+          invalidation: "寄り値割れ、または前日終値付近まで押したら出尽くしと判断して撤退。",
+          risk: "S高翌日の利益確定売り。7/14の米CPI警戒で市場全体がリスクオフだと連れ安。通期予想は据え置きで上振れは確約されていない。"
+        },
+        {
+          rank: 5, code: "5240", name: "monoAI technology", side: "avoid",
+          stance: "思惑株・見送り推奨", confidence: "低", confidenceScore: 24,
+          basis: "AI関連の需給妙味で連日S高（本日+27.8%） × 新規開示乏しくテーマ・思惑主導 × X(招き猫投資部等)でS高候補として言及（話題性大・根拠は思惑のみ）",
+          scenario: "業績の裏付けが薄く、需給とテーマ人気で連日S高になっている典型的な思惑株。買い一巡観測が出た瞬間に急落しやすく、超短期の回転に慣れていなければ見送りが無難。",
+          entry: "入るなら超短期の回転のみ。持ち越しはしない。",
+          invalidation: "出来高を伴って前日比マイナスに沈んだら思惑剥落とみて即撤退。",
+          risk: "思惑剥落時はストップ安方向へ一直線もあり得る。ビープラッツ(4381)・OKWEB等の他の急騰株も同様のリスク。"
+        }
+      ]
+    },
+    sections: [
+      {
+        id: "kessan",
+        title: "決算・IR・適時開示",
+        items: [
+          {
+            code: "7725", name: "インターアクション", tag: "上方修正", direction: "up",
+            headline: "引け後発表、今期経常を94%増益・11円増配へ上方修正。",
+            detail: "半導体イメージセンサー検査用光源装置が主力。7/13大引け後の決算速報で今期経常利益を前期比94%増益、年間配当を11円増配とする方針を開示。増益・増配のダブル好材料で翌14日の買い反応が期待される。数値は株探の当日決算速報フィード見出しベースで開示原本での確認を推奨。",
+            sources: [
+              { label: "株探 決算速報フィード(7/13)", url: "https://s.kabutan.jp/accounting_news/" },
+              { label: "株探 銘柄ニュース", url: "https://s.kabutan.jp/stocks/7725/news/" }
+            ]
+          },
+          {
+            code: "7513", name: "コジマ", tag: "好決算", direction: "up",
+            headline: "3-5月期(3Q)経常59%増益で着地、配当を4円増額修正。",
+            detail: "家電量販(ビックカメラ傘下)。7/13発表の第3四半期決算で3-5月期の経常利益が前年同期比59%増と大幅増益。あわせて配当を4円増額修正した。既存店好調が寄与とみられ、増配も伴い翌日の見直し買いに注目。",
+            sources: [
+              { label: "株探 決算速報フィード(7/13)", url: "https://s.kabutan.jp/accounting_news/" },
+              { label: "株探 コジマ", url: "https://kabutan.jp/stock/?code=7513" }
+            ]
+          },
+          {
+            code: "3994", name: "マネーフォワード", tag: "上方修正", direction: "up",
+            headline: "今期営業損益を赤字予想から黒字圏へ上方修正。",
+            detail: "クラウド会計・SaaS大手。7/13、今期営業損益を従来の赤字予想からトントン〜黒字圏へ上方修正。トレーダーズウェブの業績修正一覧でも営業利益▲2,500→▲500百万円方向への修正を確認。赤字縮小・黒字転換観測で成長株の見直し材料。",
+            sources: [
+              { label: "株探 決算速報フィード(7/13)", url: "https://s.kabutan.jp/accounting_news/" },
+              { label: "トレーダーズウェブ 業績修正", url: "https://www.traders.co.jp/market_jp/earnings_revsions" }
+            ]
+          },
+          {
+            code: "6814", name: "古野電気", tag: "好決算・ストップ高", direction: "up",
+            headline: "第1四半期の大幅増益がインパクトとなり7/13にストップ高(+15.7%)。",
+            detail: "舶用電子機器大手。第1四半期の営業利益は56.8億円で前年同期比65.3%増。舶用は中国の新造船向け中心に販売増、産業用ではITS・GNSSや防衛装備品が拡大。据え置きの上期計画100億円に対し高進捗で買いを集めS高。ただし通期予想は据え置き。",
+            sources: [
+              { label: "財経新聞(7/13)", url: "https://www.zaikei.co.jp/article/20260713/860852.html" },
+              { label: "ダイヤモンドZAi", url: "https://diamond.jp/zai/articles/-/1070012" }
+            ]
+          },
+          {
+            code: "7453", name: "良品計画", tag: "上方修正", direction: "up",
+            headline: "3Q決算で通期上方修正(営業益980億円)、本日+16.8%と急伸。",
+            detail: "2026年8月期3Qは営業収益6,907億円(前年同期比16.9%増)、営業利益808億円(同36.0%増)。通期営業利益を980億円(前期比32.7%増)へ上方修正。海外事業の伸長と原価低減が寄与。ただし本日大きく買われ織り込みが進んでおり、翌日は出尽くし売りに注意。",
+            sources: [
+              { label: "松井証券 決算", url: "https://finance.matsui.co.jp/stock/7453/settlement/index" },
+              { label: "IRBANK 7453", url: "https://irbank.net/ir/7453" }
+            ]
+          },
+          {
+            code: "9270", name: "バリュエンスHD", tag: "好決算", direction: "up",
+            headline: "9-5月期(3Q累計)経常が前年比4.2倍で急反発。",
+            detail: "ブランド品リユース・買取「なんぼや」運営。8月期の第3四半期累計経常利益が前年同期比約4.2倍と急拡大し、好進捗を評価して7/13に5日ぶり急反発。リユース需要拡大とインバウンドが追い風。",
+            sources: [
+              { label: "株探 バリュエンスHD", url: "https://kabutan.jp/stock/?code=9270" },
+              { label: "みんかぶ 決算", url: "https://minkabu.jp/stock/9270/settlement" }
+            ]
+          },
+          {
+            code: "3457", name: "And Doホールディングス", tag: "下方修正", direction: "down",
+            headline: "前期経常を一転65%減益に下方修正。",
+            detail: "不動産(ハウスドゥ、リースバック等)。7/13、前期経常利益を一転して前の期比65%減益へ下方修正。トレーダーズウェブの一覧でも経常3,000→1,030百万円への大幅下方修正を確認。大幅な下振れ着地で翌14日は売り警戒。",
+            sources: [
+              { label: "株探 決算速報フィード(7/13)", url: "https://s.kabutan.jp/accounting_news/" },
+              { label: "トレーダーズウェブ 業績修正", url: "https://www.traders.co.jp/market_jp/earnings_revsions" }
+            ]
+          },
+          {
+            code: "3907", name: "シリコンスタジオ", tag: "下方修正", direction: "down",
+            headline: "今期経常を一転赤字へ下方修正、配当も無配転落。",
+            detail: "ゲーム開発ミドルウェア・AI関連。7/13、今期経常利益を黒字予想から一転赤字へ下方修正し、配当も無配へ転落。トレーダーズウェブでも最終損益81→▲228百万円への下方修正を確認。減益・無配のダブル悪材料で翌日は売り警戒。",
+            sources: [
+              { label: "株探 決算速報フィード(7/13)", url: "https://s.kabutan.jp/accounting_news/" },
+              { label: "トレーダーズウェブ 業績修正", url: "https://www.traders.co.jp/market_jp/earnings_revsions" }
+            ]
+          },
+          {
+            code: "7815", name: "東京ボード工業", tag: "赤字転落", direction: "down",
+            headline: "今期経常を5.8億円の赤字見通しに。",
+            detail: "建築解体木材リサイクル・パーティクルボード製造。7/13、今期経常損益を5.8億円の赤字とする見通しを開示。採算悪化を織り込む形で翌14日は下値警戒。",
+            sources: [
+              { label: "株探 決算速報フィード(7/13)", url: "https://s.kabutan.jp/accounting_news/" },
+              { label: "トレーダーズウェブ 業績修正", url: "https://www.traders.co.jp/market_jp/earnings_revsions" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "ugoki",
+        title: "ストップ高・出来高急増",
+        items: [
+          {
+            code: "4381", name: "ビープラッツ", tag: "ストップ高", direction: "watch",
+            headline: "AI設計支援基盤の業務提携が材料視され連日S高、本日+76.6%で値上がり率トップ。",
+            detail: "7/10にクウジットとAI駆動開発に関わるAI設計支援基盤の構築支援で事業提携を発表。生成AI・AI駆動開発テーマの物色人気で買いが殺到し551円まで急騰、一時615円と年初来高値を更新。サブスク管理SaaS本業への思惑も絡む。急騰後の反動に注意。",
+            sources: [
+              { label: "みんかぶ 値上がりランキング", url: "https://minkabu.jp/financial_item_ranking/rise" },
+              { label: "ビープラッツ ニュース(株探)", url: "https://kabutan.jp/stock/news?code=4381" }
+            ]
+          },
+          {
+            code: "5240", name: "monoAI technology", tag: "ストップ高", direction: "watch",
+            headline: "AI関連の物色人気と需給妙味でストップ高、+27.8%。",
+            detail: "メタバース・AI関連の東証グロース銘柄。7/10にもS高(+38.5%)を付けておりチャート上でゴールデンクロスが出現、短期資金が集中。個別の新規開示より需給・テーマ主導の値動きで、急騰・急落リスクが高い。",
+            sources: [
+              { label: "monoAI ニュース(株探)", url: "https://s.kabutan.jp/stocks/5240/news/" },
+              { label: "Yahoo!ファイナンス 5240", url: "https://finance.yahoo.co.jp/quote/5240.T" }
+            ]
+          },
+          {
+            code: "6227", name: "AIメカテック", tag: "ストップ高", direction: "up",
+            headline: "海外半導体大手からの大口受注(約180億円)を受け、AI半導体テーマで買い継続し+14.7%。",
+            detail: "7/9に海外の半導体関連メーカー2社からウエハーハンドリングシステムを合計約180億円受注と発表。AI向け先端半導体の製造需要が旺盛で上期は売上高が前年比106.1%増の146.1億円、営業利益28.5億円と急拡大。受注インパクトが継続的に材料視され高値圏を維持。",
+            sources: [
+              { label: "財経新聞", url: "https://www.zaikei.co.jp/article/20260710/860613.html" },
+              { label: "AIメカテック ニュース(株探)", url: "https://s.kabutan.jp/stocks/6227/news/" }
+            ]
+          },
+          {
+            code: "4199", name: "ワンダープラネット", tag: "決算プレイ", direction: "watch",
+            headline: "本日の決算発表を控えた思惑・期待買いで+17.6%。",
+            detail: "スマホゲーム開発の東証グロース銘柄。7/13が決算発表予定日で、業績改善への期待から発表前に短期資金が流入し値上がり率上位に。決算内容次第で翌14日以降の値動きが大きくなりやすく、材料出尽くしリスクも含め要注視。",
+            sources: [
+              { label: "松井証券 4199決算", url: "https://finance.matsui.co.jp/stock/4199/settlement/index" },
+              { label: "Yahoo!ファイナンス 適時開示", url: "https://finance.yahoo.co.jp/quote/4199.T/disclosure" }
+            ]
+          },
+          {
+            code: "195A", name: "MUSCAT GROUP", tag: "ストップ高", direction: "watch",
+            headline: "IPO後の値の軽い新興株にテーマ資金が流入しストップ高(+15.1%)。",
+            detail: "2024年上場の新興銘柄で時価総額・流動性が小さく短期資金の影響を受けやすい。本日はストップ高まで買われたが個別の新規開示は確認できず需給要因が主体。値動きが荒く、翌営業日は反落リスクに留意。",
+            sources: [
+              { label: "Yahoo!ファイナンス ストップ高", url: "https://finance.yahoo.co.jp/stocks/ranking/stopHigh?market=all" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "sns",
+        title: "SNS・ブログで話題",
+        items: [
+          {
+            code: "285A", name: "キオクシアHD", tag: "X話題", direction: "watch",
+            headline: "AI・半導体の中心銘柄として売買が最も活発だが本日-12.9%、強弱が割れる。",
+            detail: "デイトレ層の注目度が突出。@ExpressNight・@farm_academy らが明日のデイトレ候補に挙げる一方、@__ChildProdigy らは『高値覚えの飛びつき・ナンピンの罠』『日足の形は警戒』と下落リスクを指摘。本日は-12.86%と急落しており、強気弱気が割れて片張りの根拠にはならない。いずれも匿名アカウントの思惑・煽りの域を出ない点に留意。",
+            sources: [
+              { label: "Yahoo!リアルタイム検索(キオクシア 285A)", url: "https://search.yahoo.co.jp/realtime/search?p=キオクシア 285A" }
+            ]
+          },
+          {
+            code: "6814", name: "古野電気", tag: "決算・材料", direction: "up",
+            headline: "増益決算＋防衛・レーダー関連思惑で買い注目。",
+            detail: "『あす上がる株』YouTube(7/13回)が増益として取り上げ、Yahoo!リアルタイムでも @kametrade20(亀トレ)・@sweetsakuma0705 らがストップ高候補・監視銘柄に挙げる。決算好感と防衛関連思惑が重なる。個人の思惑込みの注目である点に留意。",
+            sources: [
+              { label: "YouTube あす上がる株 7/13", url: "https://www.youtube.com/watch?v=BllVDUdJJk8" },
+              { label: "Yahoo!リアルタイム検索(ストップ高 明日)", url: "https://search.yahoo.co.jp/realtime/search?p=ストップ高 明日" }
+            ]
+          },
+          {
+            code: "5240", name: "monoAI technology", tag: "S高・値上がり率", direction: "watch",
+            headline: "AI関連として値上がり率上位・S高で個人の物色人気。",
+            detail: "みんかぶ値上がり率上位に登場し、Yahoo!リアルタイムで @yijianshangyi(招き猫投資部) らがS高候補・注目に挙げる。小型AI関連の短期資金流入で、思惑主導の急騰・急落リスクが高い銘柄。",
+            sources: [
+              { label: "みんかぶ 値上がりランキング", url: "https://minkabu.jp/financial_item_ranking/rise" },
+              { label: "Yahoo!リアルタイム検索(ストップ高 明日)", url: "https://search.yahoo.co.jp/realtime/search?p=ストップ高 明日" }
+            ]
+          },
+          {
+            code: "4381", name: "ビープラッツ", tag: "S高・値上がり率", direction: "watch",
+            headline: "値上がり率ランキング上位で短期資金の物色対象。",
+            detail: "みんかぶ値上がり率上位にランクインし、Yahoo!リアルタイムで @nemutai994 らがS高・注目銘柄として言及。+76%と急騰した小型株で高値掴みリスクが大きく、思惑レベルの注目。",
+            sources: [
+              { label: "みんかぶ 値上がりランキング", url: "https://minkabu.jp/financial_item_ranking/rise" },
+              { label: "Yahoo!リアルタイム検索(ストップ高 明日)", url: "https://search.yahoo.co.jp/realtime/search?p=ストップ高 明日" }
+            ]
+          },
+          {
+            code: "7453", name: "良品計画", tag: "決算・材料", direction: "up",
+            headline: "業績上方修正を好感、明日の反応に注目。",
+            detail: "『あす上がる株』YouTube(7/13回)が『良品計画 上方修正』として取り上げ、Yahoo!リアルタイムでも @raimu18282313 が明日の注目銘柄に挙げる。本日+16.8%と大きく買われており、上方修正の織り込み度合いと寄り付きの反応がカギ。",
+            sources: [
+              { label: "YouTube あす上がる株 7/13", url: "https://www.youtube.com/watch?v=BllVDUdJJk8" },
+              { label: "Yahoo!リアルタイム検索(明日の注目銘柄)", url: "https://search.yahoo.co.jp/realtime/search?p=明日の注目銘柄" }
+            ]
+          },
+          {
+            code: "2160", name: "ジーエヌアイグループ", tag: "決算・材料", direction: "watch",
+            headline: "バイオ関連の材料・決算思惑で個人が監視。",
+            detail: "Yahoo!リアルタイムの決算サプライズ検索で @gmanewskk が、ストップ高検索で @GoodLuck_Lillie が言及。バイオ・創薬系はニュース次第で乱高下しやすく、明日の材料待ちの監視銘柄。噂・思惑段階。",
+            sources: [
+              { label: "Yahoo!リアルタイム検索(決算 サプライズ)", url: "https://search.yahoo.co.jp/realtime/search?p=決算 サプライズ 株" }
+            ]
+          },
+          {
+            code: "2157", name: "コシダカHD", tag: "決算サプライズ", direction: "watch",
+            headline: "決算サプライズ(増配・優待思惑)で買い予想数が上昇。",
+            detail: "みんかぶ買い予想数上昇ランキング上位に登場。Yahoo!リアルタイムでも @james_bonnou が決算サプライズ銘柄として言及。カラオケ『まねきねこ』運営で、決算内容への評価が明日の値動きを左右する。本日+6.7%。",
+            sources: [
+              { label: "みんかぶ 買い予想数上昇ランキング", url: "https://minkabu.jp/financial_item_ranking/buy_picks_rise" },
+              { label: "Yahoo!リアルタイム検索(決算 サプライズ)", url: "https://search.yahoo.co.jp/realtime/search?p=決算 サプライズ 株" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
     date: "2026-07-10",
     targetDate: "2026-07-13",
     collectedAt: "前日引け後収集・朝7:00更新",
