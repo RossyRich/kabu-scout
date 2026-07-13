@@ -75,6 +75,20 @@
   .res-nums b.up { color: var(--up); }
   .res-nums b.down { color: var(--down); }
 
+  /* ---------- 通算成績テーブル ---------- */
+  .stats-scroll { overflow-x: auto; }
+  table.stats { width: 100%; border-collapse: collapse; font-size: 13.5px; white-space: nowrap; }
+  .stats th {
+    font-family: var(--mono); font-size: 10px; color: var(--faint); letter-spacing: 0.12em;
+    text-align: right; padding: 8px 12px; border-bottom: 1px solid var(--line); font-weight: 400;
+  }
+  .stats th:first-child { text-align: left; }
+  .stats td { padding: 11px 12px; text-align: right; border-bottom: 1px solid var(--line); font-family: var(--mono); }
+  .stats td:first-child { text-align: left; font-family: inherit; font-weight: 700; }
+  .stats tr.total td { border-top: 2px solid var(--accent); border-bottom: none; background: rgba(232,193,90,0.05); font-weight: 700; }
+  .stats .up { color: var(--up); }
+  .stats .down { color: var(--down); }
+
   /* ---------- 日付タブ ---------- */
   .dates {
     display: flex; gap: 8px; overflow-x: auto; padding: 16px 0 4px;
@@ -356,7 +370,8 @@
   function renderViewTabs() {
     const vt = $('#viewtabs');
     vt.hidden = false;
-    vt.innerHTML = [['plan', '翌朝の予想'], ['results', '結果分析']].map(([v, label]) =>
+    const planLabel = fmtDate(DATA[0].targetDate) + 'の予想';
+    vt.innerHTML = [['plan', planLabel], ['results', '結果分析'], ['stats', '通算成績']].map(([v, label]) =>
       '<button class="vtab' + (view === v ? ' active' : '') + '" data-v="' + v + '">' + label + '</button>'
     ).join('');
     vt.querySelectorAll('.vtab').forEach(btn => {
@@ -413,13 +428,84 @@
       return;
     }
 
-    // 通算成績（順位別）
+    html += '<div class="plans-caution">「30分」＝寄り付き→9:30、「引け」＝寄り付き→大引けの自動採点（±0.5%を境に○×—）。順位別の集計は「通算成績」タブへ。実際の売買結果とは異なります。</div>';
+
+    // 日別の答え合わせ（新しい順）
+    days.forEach(d => {
+      html += '<section class="section">' +
+        '<div class="section-head"><span class="no">RESULT</span><h2>' + esc(fmtDate(d.targetDate)) + ' の答え合わせ</h2></div>' +
+        (d.results.note ? '<div class="plan-note">' + esc(d.results.note) + '</div>' : '') +
+        d.results.items.slice().sort((a, b) => a.rank - b.rank).map(resultRowHTML).join('') +
+      '</section>';
+    });
+
+    $('#app').innerHTML = html;
+  }
+
+  function renderStats() {
+    $('#dates').hidden = true;
+    const latest = DATA[0];
+    $('#collected').textContent = latest.date + ' ' + (latest.collectedAt || '') + ' 収集';
+
+    const days = DATA.filter(d => d.results && d.results.items && d.results.items.length);
+    let html = '<div class="target"><h1>通算成績</h1><span class="sub">' + days.length + '営業日分の自動集計</span></div>';
+
+    if (!days.length) {
+      html += '<div class="nodata">まだ結果がありません。<br>最初の答え合わせのあとに集計が表示されます。</div>';
+      $('#app').innerHTML = html;
+      return;
+    }
+
     const ranks = [1, 2, 3, 4, 5];
+
+    // --- 寄り付き売買→30分後決済シミュレーション ---
+    // プランに従い寄り成りでエントリー（買い/売り）、9:30に決済。見送りは取引なし。
+    const newS = () => ({ n: 0, w: 0, l: 0, f: 0, sum: 0 });
+    const sim = {};
+    ranks.forEach(r => { sim[r] = newS(); });
+    const simTotal = newS();
+    days.forEach(d => d.results.items.forEach(it => {
+      if (it.side !== 'buy' && it.side !== 'sell') return;      // 見送りは取引しない
+      if (typeof it.oc30 !== 'number' || !it.verdict30) return; // 30分データ無しは除外
+      const pl = it.side === 'buy' ? it.oc30 : -it.oc30;
+      const s = sim[it.rank];
+      [s, simTotal].forEach(m => {
+        if (!m) return;
+        m.n++; m.sum += pl;
+        if (it.verdict30 === 'win') m.w++;
+        else if (it.verdict30 === 'lose') m.l++;
+        else m.f++;
+      });
+    }));
+    const pctCell = (v) => {
+      if (v === null) return '<td>—</td>';
+      const cls = v > 0 ? 'up' : (v < 0 ? 'down' : '');
+      return '<td class="' + cls + '">' + (v > 0 ? '+' : '') + v.toFixed(2) + '%</td>';
+    };
+    const simRow = (label, s, isTotal) =>
+      '<tr' + (isTotal ? ' class="total"' : '') + '>' +
+      '<td>' + label + '</td>' +
+      '<td>' + s.n + '回</td>' +
+      '<td>' + s.w + '勝' + s.l + '敗' + s.f + '分</td>' +
+      '<td>' + ((s.w + s.l) ? Math.round(100 * s.w / (s.w + s.l)) + '%' : '—') + '</td>' +
+      pctCell(s.n ? s.sum / s.n : null) +
+      pctCell(s.n ? s.sum : null) +
+      '</tr>';
+    html += '<section class="market">' +
+      '<div class="summary"><b>寄り付き売買 → 30分後（9:30）決済シミュレーション</b><br>' +
+      'プランに従って寄り成りでエントリー（買い方向=買い、売り方向=売り、見送り=取引なし）し、9:30に決済した想定。1回あたり同額投資、手数料・スリッページは含まない自動採点の参考値。</div>' +
+      '<div class="stats-scroll"><table class="stats">' +
+      '<tr><th>順位</th><th>取引数</th><th>勝敗</th><th>勝率</th><th>平均損益</th><th>累計損益</th></tr>' +
+      ranks.map(r => simRow(r + '位', sim[r], false)).join('') +
+      simRow('合計', simTotal, true) +
+      '</table></div>' +
+    '</section>';
+
+    // --- 参考: 判定ベースの通算（30分/引け 両指標） ---
     const newM = () => ({ w: 0, l: 0, f: 0, sum: 0, pn: 0 });
     const stat = {};
     ranks.forEach(r => { stat[r] = { m30: newM(), mEnd: newM() }; });
     const total = { m30: newM(), mEnd: newM() };
-    // 平均損益は戦略方向ベース: 買い=寄→引そのまま、売り=符号反転、見送り=対象外
     const addTo = (m, side, verdict, oc) => {
       if (!verdict) return;
       const pl = side === 'buy' ? oc : (side === 'sell' ? -oc : null);
@@ -441,29 +527,21 @@
       '<div class="value">30分 ' + wr(s.m30) + ' ／ 引け ' + wr(s.mEnd) + '</div>' +
       '<div class="note">30分: ' + s.m30.w + '勝' + s.m30.l + '敗' + s.m30.f + '分・平均 ' + avg(s.m30) + '</div>' +
       '<div class="note">引け: ' + s.mEnd.w + '勝' + s.mEnd.l + '敗' + s.mEnd.f + '分・平均 ' + avg(s.mEnd) + '</div></div>';
-    html += '<section class="market">' +
-      '<div class="summary">通算成績（' + days.length + '営業日分）。「30分」＝寄り付き→9:30、「引け」＝寄り付き→大引けの2つの物差しで判定：買い方向は+0.5%以上で的中、売り方向は-0.5%以下で的中、見送りは下落なら見送り正解（±0.5%未満は引き分け）。平均損益は戦略方向に沿った損益（見送りは勝率のみ集計）。</div>' +
+    html += '<section class="section">' +
+      '<div class="section-head"><span class="no">REF</span><h2>判定ベースの通算（見送り含む・2指標）</h2></div>' +
+      '<div class="plans-caution">「30分」＝寄り→9:30、「引け」＝寄り→大引け。買いは+0.5%以上・売りは-0.5%以下で的中、見送りは下落で見送り正解。平均は戦略方向に沿った損益（見送りは勝率のみ）。</div>' +
       '<div class="points">' +
         statPoint('全体', total) +
         ranks.map(r => statPoint(r + '位', stat[r])).join('') +
       '</div>' +
-      '<div class="plans-caution">自動採点による参考記録です。実際の売買結果（エントリータイミング・スリッページ等）とは異なります。</div>' +
     '</section>';
-
-    // 日別の答え合わせ（新しい順）
-    days.forEach(d => {
-      html += '<section class="section">' +
-        '<div class="section-head"><span class="no">RESULT</span><h2>' + esc(fmtDate(d.targetDate)) + ' の答え合わせ</h2></div>' +
-        (d.results.note ? '<div class="plan-note">' + esc(d.results.note) + '</div>' : '') +
-        d.results.items.slice().sort((a, b) => a.rank - b.rank).map(resultRowHTML).join('') +
-      '</section>';
-    });
 
     $('#app').innerHTML = html;
   }
 
   function render() {
     renderViewTabs();
+    if (view === 'stats') { renderStats(); return; }
     if (view === 'results') { renderResults(); return; }
     $('#dates').hidden = false;
     renderDates();
