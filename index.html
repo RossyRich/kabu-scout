@@ -592,6 +592,8 @@
               (p.code ? '<span class="code">' + esc(p.code) + '</span>' : '') +
               '<span class="name">' + nameInner + '</span>' +
               (p.stance ? '<span class="tag">' + esc(p.stance) + '</span>' : '') +
+              (d.prices && d.prices[p.code] && d.prices[p.code].turnover
+                ? '<span class="tag">代金 ' + esc(d.prices[p.code].turnover) + '</span>' : '') +
               priceChip(d, p.code) +
               (score !== null
                 ? '<span class="conf">自信度 <b>' + score + '</b><span class="max">/100</span>' +
