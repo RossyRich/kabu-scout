@@ -283,6 +283,7 @@
 </footer>
 
 <script src="data.js"></script>
+<script src="history.js"></script>
 <script>
 (function () {
   const DATA = (window.KABU_DATA || []).slice();
@@ -450,7 +451,16 @@
     const latest = DATA[0];
     $('#collected').textContent = latest.date + ' ' + (latest.collectedAt || '') + ' 収集';
 
-    const days = DATA.filter(d => d.results && d.results.items && d.results.items.length);
+    // 通算はhistory.js（全期間の答え合わせ履歴）とdata.js（直近10日）を日付でマージして集計。
+    // data.jsは直近10日で切り捨てられるため、それ以前の分はhistory.jsが持つ。同日付はdata.js優先。
+    const byDate = {};
+    (window.KABU_HISTORY || []).forEach(h => {
+      if (h && h.date && h.items && h.items.length) byDate[h.date] = h.items;
+    });
+    DATA.forEach(d => {
+      if (d.results && d.results.items && d.results.items.length) byDate[d.targetDate] = d.results.items;
+    });
+    const days = Object.keys(byDate).sort().reverse().map(k => ({ date: k, items: byDate[k] }));
     let html = '<div class="target"><h1>通算成績</h1><span class="sub">' + days.length + '営業日分の自動集計</span></div>';
 
     if (!days.length) {
@@ -467,7 +477,7 @@
     const sim = {};
     ranks.forEach(r => { sim[r] = newS(); });
     const simTotal = newS();
-    days.forEach(d => d.results.items.forEach(it => {
+    days.forEach(d => d.items.forEach(it => {
       if (it.side !== 'buy' && it.side !== 'sell') return;      // 見送りは取引しない
       if (typeof it.oc30 !== 'number' || !it.verdict30) return; // 30分データ無しは除外
       const pl = it.side === 'buy' ? it.oc30 : -it.oc30;
@@ -515,7 +525,7 @@
       if (typeof pl === 'number') { m.sum += pl; m.pn++; }
       if (verdict === 'win') m.w++; else if (verdict === 'lose') m.l++; else m.f++;
     };
-    days.forEach(d => d.results.items.forEach(it => {
+    days.forEach(d => d.items.forEach(it => {
       const s = stat[it.rank];
       if (!s) return;
       addTo(s.mEnd, it.side, it.verdict, it.oc);
