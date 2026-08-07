@@ -280,7 +280,12 @@
 <footer>
   本ページは公開情報を自動収集した参考資料です。情報の正確性・網羅性は保証されません。
   数値や材料は必ず一次情報（適時開示・取引所発表等）でご確認ください。投資判断はご自身の責任でお願いします。
+  <div id="buildstamp" style="margin-top:8px; font-family:var(--mono); font-size:10px; letter-spacing:0.1em;"></div>
 </footer>
+<script>
+  // 画面バージョン（キャッシュ切り分け用）。古い表示が出ていればこの日付が古い
+  document.getElementById('buildstamp').textContent = 'UI v2026-08-08 / データ最終更新は右上参照';
+</script>
 
 <script src="data.js"></script>
 <script src="history.js"></script>
