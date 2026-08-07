@@ -478,17 +478,18 @@
 
     // --- 寄り付き売買→30分後決済シミュレーション ---
     // プランに従い寄り成りでエントリー（買い/売り）、9:30に決済。見送りは取引なし。
-    const newS = () => ({ n: 0, w: 0, l: 0, f: 0, sum: 0 });
+    const newS = () => ({ n: 0, a: 0, x: 0, w: 0, l: 0, f: 0, sum: 0 });
     const sim = {};
     ranks.forEach(r => { sim[r] = newS(); });
     const simTotal = newS();
     days.forEach(d => d.items.forEach(it => {
-      if (it.side !== 'buy' && it.side !== 'sell') return;      // 見送りは取引しない
-      if (typeof it.oc30 !== 'number' || !it.verdict30) return; // 30分データ無しは除外
-      const pl = it.side === 'buy' ? it.oc30 : -it.oc30;
       const s = sim[it.rank];
+      if (!s) return;
+      if (it.side === 'avoid') { s.a++; simTotal.a++; return; }          // 見送り＝取引しない
+      if (it.side !== 'buy' && it.side !== 'sell') return;
+      if (typeof it.oc30 !== 'number' || !it.verdict30) { s.x++; simTotal.x++; return; } // 9:30データ欠測は集計外
+      const pl = it.side === 'buy' ? it.oc30 : -it.oc30;
       [s, simTotal].forEach(m => {
-        if (!m) return;
         m.n++; m.sum += pl;
         if (it.verdict30 === 'win') m.w++;
         else if (it.verdict30 === 'lose') m.l++;
@@ -504,6 +505,7 @@
       '<tr' + (isTotal ? ' class="total"' : '') + '>' +
       '<td>' + label + '</td>' +
       '<td>' + s.n + '回</td>' +
+      '<td>' + (s.a ? s.a + '回' : '—') + '</td>' +
       '<td>' + s.w + '勝' + s.l + '敗' + s.f + '分</td>' +
       '<td>' + ((s.w + s.l) ? Math.round(100 * s.w / (s.w + s.l)) + '%' : '—') + '</td>' +
       pctCell(s.n ? s.sum / s.n : null) +
@@ -511,9 +513,11 @@
       '</tr>';
     html += '<section class="market">' +
       '<div class="summary"><b>寄り付き売買 → 30分後（9:30）決済シミュレーション</b><br>' +
-      'プランに従って寄り成りでエントリー（買い方向=買い、売り方向=売り、見送り=取引なし）し、9:30に決済した想定。1回あたり同額投資、手数料・スリッページは含まない自動採点の参考値。</div>' +
+      'プランに従って寄り成りでエントリー（買い方向=買い、売り方向=売り、見送り=取引なし）し、9:30に決済した想定。1回あたり同額投資、手数料・スリッページは含まない自動採点の参考値。' +
+      '見送り推奨の銘柄は自信度スコアが低くなるため下位（主に5位）に集まる。' +
+      (simTotal.x ? '<br>※9:30時点の株価が取得できなかった' + simTotal.x + '回は取引数から除外。' : '') + '</div>' +
       '<div class="stats-scroll"><table class="stats">' +
-      '<tr><th>順位</th><th>取引数</th><th>勝敗</th><th>勝率</th><th>平均損益</th><th>累計損益</th></tr>' +
+      '<tr><th>順位</th><th>取引数</th><th>見送り</th><th>勝敗</th><th>勝率</th><th>平均損益</th><th>累計損益</th></tr>' +
       ranks.map(r => simRow(r + '位', sim[r], false)).join('') +
       simRow('合計', simTotal, true) +
       '</table></div>' +
