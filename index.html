@@ -474,7 +474,13 @@
       return;
     }
 
-    const ranks = [1, 2, 3, 4, 5];
+    // 順位はデータに実在する最大ランクまで（6件出した日があれば6位の行も出る）
+    let maxRank = 5;
+    days.forEach(d => d.items.forEach(it => {
+      if (typeof it.rank === 'number' && it.rank > maxRank) maxRank = it.rank;
+    }));
+    const ranks = [];
+    for (let i = 1; i <= maxRank; i++) ranks.push(i);
 
     // --- 寄り付き売買→30分後決済シミュレーション ---
     // プランに従い寄り成りでエントリー（買い/売り）、9:30に決済。見送りは取引なし。
@@ -506,6 +512,7 @@
       '<td>' + label + '</td>' +
       '<td>' + s.n + '回</td>' +
       '<td>' + (s.a ? s.a + '回' : '—') + '</td>' +
+      '<td>' + (s.x ? s.x + '回' : '—') + '</td>' +
       '<td>' + s.w + '勝' + s.l + '敗' + s.f + '分</td>' +
       '<td>' + ((s.w + s.l) ? Math.round(100 * s.w / (s.w + s.l)) + '%' : '—') + '</td>' +
       pctCell(s.n ? s.sum / s.n : null) +
@@ -515,9 +522,9 @@
       '<div class="summary"><b>寄り付き売買 → 30分後（9:30）決済シミュレーション</b><br>' +
       'プランに従って寄り成りでエントリー（買い方向=買い、売り方向=売り、見送り=取引なし）し、9:30に決済した想定。1回あたり同額投資、手数料・スリッページは含まない自動採点の参考値。' +
       '見送り推奨の銘柄は自信度スコアが低くなるため下位（主に5位）に集まる。' +
-      (simTotal.x ? '<br>※9:30時点の株価が取得できなかった' + simTotal.x + '回は取引数から除外。' : '') + '</div>' +
+      '欠測＝9:30時点の株価が取得できず集計外にした取引。プラン件数は日により3〜6件のため、順位ごとの行の合計（取引＋見送り＋欠測）は営業日数と一致しないことがある。</div>' +
       '<div class="stats-scroll"><table class="stats">' +
-      '<tr><th>順位</th><th>取引数</th><th>見送り</th><th>勝敗</th><th>勝率</th><th>平均損益</th><th>累計損益</th></tr>' +
+      '<tr><th>順位</th><th>取引数</th><th>見送り</th><th>欠測</th><th>勝敗</th><th>勝率</th><th>平均損益</th><th>累計損益</th></tr>' +
       ranks.map(r => simRow(r + '位', sim[r], false)).join('') +
       simRow('合計', simTotal, true) +
       '</table></div>' +
